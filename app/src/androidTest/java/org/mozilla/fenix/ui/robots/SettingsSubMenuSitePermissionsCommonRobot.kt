@@ -92,17 +92,19 @@ class SettingsSubMenuSitePermissionsCommonRobot {
 
     fun clickGoToSettingsButton() {
         goToSettingsButton().click()
-        mDevice.findObject(UiSelector().resourceId("com.android.settings:id/list")).waitForExists(
-            waitingTime)
+        mDevice.findObject(UiSelector().resourceId("com.android.settings:id/list"))
+            .waitForExists(waitingTime)
     }
 
     fun openAppSystemPermissionsSettings() {
-        mDevice.waitNotNull(Until.findObject(By.text("Permissions")), waitingTime)
+        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        // mDevice.waitNotNull(Until.findObject(By.text("Permissions")), waitingTime)
         mDevice.findObject(UiSelector().text("Permissions")).click()
     }
 
     fun switchAppPermissionSystemSetting(permissionCategory: String) {
-        mDevice.waitNotNull(Until.findObject(By.text(permissionCategory)), waitingTime)
+        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        // mDevice.waitNotNull(Until.findObject(By.text(permissionCategory)), waitingTime)
         mDevice.findObject(UiSelector().text(permissionCategory)).click()
     }
 
