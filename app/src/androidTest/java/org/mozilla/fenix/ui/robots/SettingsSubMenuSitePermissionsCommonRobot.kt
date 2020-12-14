@@ -92,7 +92,8 @@ class SettingsSubMenuSitePermissionsCommonRobot {
 
     fun clickGoToSettingsButton() {
         goToSettingsButton().click()
-        mDevice.waitNotNull(Until.findObject(By.res("com.android.settings:id/list")))
+        mDevice.findObject(UiSelector().resourceId("com.android.settings:id/list")).waitForExists(
+            waitingTime)
     }
 
     fun openAppSystemPermissionsSettings() {
