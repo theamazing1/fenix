@@ -7,16 +7,23 @@ package org.mozilla.fenix.ui.robots
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.Matchers.not
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.assertIsChecked
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.ext.waitNotNull
 
 /**
  * Implementation of Robot Pattern for the settings Site Permissions sub menu.
@@ -40,6 +47,8 @@ class SettingsSubMenuSitePermissionsCommonRobot {
     fun verifyCheckCommonRadioButtonDefault() = assertCheckCommonRadioButtonDefault()
 
     fun verifyBlockedByAndroid() = assertBlockedByAndroid()
+
+    fun verifyUnblockedByAndroid() = assertUnblockedByAndroid()
 
     fun verifyToAllowIt() = assertToAllowIt()
 
@@ -79,6 +88,21 @@ class SettingsSubMenuSitePermissionsCommonRobot {
         verifyassertAskToAllowRecommended()
         verifyassertBlocked()
         verifyCheckCommonRadioButtonDefault()
+    }
+
+    fun clickGoToSettingsButton() {
+        goToSettingsButton().click()
+        mDevice.waitNotNull(Until.findObject(By.res("com.android.settings:id/list")))
+    }
+
+    fun openAppSystemPermissionsSettings() {
+        mDevice.waitNotNull(Until.findObject(By.text("Permissions")), waitingTime)
+        mDevice.findObject(UiSelector().text("Permissions")).click()
+    }
+
+    fun switchAppPermissionSystemSetting(permissionCategory: String) {
+        mDevice.waitNotNull(Until.findObject(By.text(permissionCategory)), waitingTime)
+        mDevice.findObject(UiSelector().text(permissionCategory)).click()
     }
 
     class Transition {
@@ -131,6 +155,9 @@ private fun assertCheckCommonRadioButtonDefault() {
 private fun assertBlockedByAndroid() = onView(withText(R.string.phone_feature_blocked_by_android))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
+private fun assertUnblockedByAndroid() = onView(withText(R.string.phone_feature_blocked_by_android))
+    .check(matches(not(isDisplayed())))
+
 private fun assertToAllowIt() = onView(withText(R.string.phone_feature_blocked_intro))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
@@ -143,8 +170,10 @@ private fun assertTapPermissions() = onView(withText("2. Tap Permissions"))
 private fun assertToggleNameToON(name: String) = onView(withText(name))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertGoToSettingsButton() = onView(withId(R.id.settings_button))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertGoToSettingsButton() =
+    goToSettingsButton().check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun goBackButton() =
     onView(allOf(withContentDescription("Navigate up")))
+
+private fun goToSettingsButton() = onView(withId(R.id.settings_button))
